@@ -1,0 +1,27 @@
+package server;
+
+import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+@Path("/cars")
+public class CarResource {
+	@GET
+	@Produces( {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON} )
+	public List<Car> getCars() {
+		return CarDao.instance.getCars();
+	}
+	
+	@GET
+	@Produces( {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON} )
+	@Path("/{carId}")
+	public Car getCar(@PathParam("carId") String id) {
+		Car car = new Car();
+		//return CarDao.instance.getCarByID(Integer.parseInt(id));
+		return car;
+	}
+}

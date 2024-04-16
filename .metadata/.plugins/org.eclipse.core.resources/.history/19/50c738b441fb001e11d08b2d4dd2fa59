@@ -1,0 +1,39 @@
+package server;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlRootElement(name="Car")
+
+@XmlType(propOrder = {"id", "make", "model", "year", "transmission", "horsePower"})
+public class Car {
+	private int id;
+	private String make;
+	private String model;
+	private int year;
+	private String transmission;
+	private int horsePower;
+	
+//	public Car() {
+//		id = 0;
+//		make = "*make*";
+//		model = "*model*";
+//		year = 0;
+//		transmission = "*transmission*";
+//		horsePower = 0;
+//	}
+	
+	public int getId() { return id; }
+	public String getMake() { return make; }
+	public String getModel() { return model; }
+	public int getYear() { return year; }
+	public String getTransmission() { return transmission; }
+	public int getHorsePower() { return horsePower; }
+	
+	public void setId(int id) { this.id = id; }
+	public void setMake(String make) { this.make = make; }
+	public void setModel(String model) { this.model = model; }
+	public void setYear(int year) { this.year = year; }
+	public void setTransmission(String transmission) { this.transmission = transmission; }
+	public void setHorsePower(int horsePower) { this.horsePower = horsePower; }
+}

@@ -1,0 +1,89 @@
+package server;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public enum CarDao {
+	instance;
+	
+	private static final String JDBC_DRIVER = "org.hsqldb.jdbcDriver";
+    private static final String DATABASE_URL = "jdbc:hsqldb:hsql://localhost/oneDB;ifexists=true"; 
+    private static final String DATABASE_USER = "SA"; 
+    private static final String DATABASE_PASSWORD = "Passw0rd";
+	
+	public List<Car> getCars() {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		List<Car> cars = new ArrayList<>();
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id;";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				var c = new Car(id, make, model, year, transmission, horsePower);
+				cars.add(c);
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return cars;
+	}
+	
+	public Car getCarByID(int id) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		Car car;
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE c.id = " + Integer.toString(id) + ";";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				car = new Car(id, make, model, year, transmission, horsePower);
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return car;
+	}
+}

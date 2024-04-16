@@ -1,0 +1,259 @@
+package server;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public enum CarDao {
+	instance;
+	
+	private static final String JDBC_DRIVER = "org.hsqldb.jdbcDriver";
+    private static final String DATABASE_URL = "jdbc:hsqldb:hsql://localhost/oneDB;ifexists=true"; 
+    private static final String DATABASE_USER = "SA"; 
+    private static final String DATABASE_PASSWORD = "Passw0rd";
+	
+	public List<Car> getCars() {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		List<Car> cars = new ArrayList<>();
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id;";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				var c = new Car(id, make, model, year, transmission, horsePower);
+				cars.add(c);
+			}
+		} catch (final Exception e) {
+			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				System.err.println("[ERROR] Failed to close HSQL database connections.");
+				e.printStackTrace();
+			}
+		}
+		return cars;
+	}
+	
+	public Car getCarByID(int id) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		Car car = new Car();
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE c.id = " + Integer.toString(id) + ";";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int carID = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				car.setId(carID);
+				car.setMake(make);
+				car.setModel(model);
+				car.setYear(year);
+				car.setTransmission(transmission);
+				car.setHorsePower(horsePower);
+			}
+		} catch (final Exception e) {
+			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				System.err.println("[ERROR] Failed to close HSQL database connections.");
+				e.printStackTrace();
+			}
+		}
+		return car;
+	}
+	
+	public List<Car> getCarsByMake(String make) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		List<Car> cars = new ArrayList<>();
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE m.manufacturer = '" + make + "';";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String carMake = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				var c = new Car(id, carMake, model, year, transmission, horsePower);
+				cars.add(c);
+			}
+		} catch (final Exception e) {
+			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				System.err.println("[ERROR] Failed to close HSQL database connections.");
+				e.printStackTrace();
+			}
+		}
+		return cars;
+	}
+	
+	public List<Car> getCarsByModel(String model) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		List<Car> cars = new ArrayList<>();
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE c.model = '" + model + "';";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String carModel = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				var c = new Car(id, make, carModel, year, transmission, horsePower);
+				cars.add(c);
+			}
+		} catch (final Exception e) {
+			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				System.err.println("[ERROR] Failed to close HSQL database connections.");
+				e.printStackTrace();
+			}
+		}
+		return cars;
+	}
+	
+	public List<Car> getCarsByYear(int year) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		List<Car> cars = new ArrayList<>();
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE c.year = " + Integer.toString(year) + ";";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int carYear = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				var c = new Car(id, make, model, carYear, transmission, horsePower);
+				cars.add(c);
+			}
+		} catch (final Exception e) {
+			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				System.err.println("[ERROR] Failed to close HSQL database connections.");
+				e.printStackTrace();
+			}
+		}
+		
+		return cars;
+	}
+	
+	public List<Car> getCarsByTransmission(String transmission) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		List<Car> cars = new ArrayList<>();
+		
+		try {
+			Class.forName(JDBC_DRIVER);
+			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+			statement = connection.createStatement();
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE c.model = '" + transmission + "';";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String carTransmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				var c = new Car(id, make, model, year, carTransmission, horsePower);
+				cars.add(c);
+			}
+		} catch (final Exception e) {
+			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+				statement.close();
+				connection.close();
+			} catch (final Exception e) {
+				System.err.println("[ERROR] Failed to close HSQL database connections.");
+				e.printStackTrace();
+			}
+		}
+		return cars;
+	}
+}
