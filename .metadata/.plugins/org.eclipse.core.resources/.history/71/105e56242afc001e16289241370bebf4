@@ -28,7 +28,8 @@ public class CarResource {
 	@Produces( {MediaType.APPLICATION_XML} )
 	@Path("/manufacturer/{carMake}")
 	public List<Car> getCarsByMake(@PathParam("carMake") String make) {
-		return CarDao.instance.getCarsByMake(make);
+		//return CarDao.instance.getCarsByMake(make);
+		return Collections.emptyList();
 	}
 	
 //	@GET

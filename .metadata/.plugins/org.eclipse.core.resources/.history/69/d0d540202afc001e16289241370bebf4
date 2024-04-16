@@ -115,36 +115,35 @@ public enum CarDao {
 	 * @return A list of all cars with the given make.
 	 */
 	public List<Car> getCarsByMake(String make) {
-//		List<Car> cars = new ArrayList<>();
-//		
-//		try {
-//			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE m.manufacturer = '" + make + "';";
-//			resultSet = statement.executeQuery(sql);
-//			
-//			while (resultSet.next()) {
-//				int id = resultSet.getInt("id");
-//				String carMake = resultSet.getString("manufacturer");
-//				String model = resultSet.getString("model");
-//				int year = resultSet.getInt("year");
-//				String transmission = resultSet.getString("transmission");
-//				int horsePower = resultSet.getInt("horsepower");
-//				
-//				var c = new Car(id, carMake, model, year, transmission, horsePower);
-//				cars.add(c);
-//			}
-//		} catch (final SQLException e) {
-//			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
-//			e.printStackTrace();
-//		} finally {
-//			try {
-//				resultSet.close();
-//			} catch (final Exception e) {
-//				System.err.println("[ERROR] Failed to close resultSet.");
-//				e.printStackTrace();
-//			}
-//		}
-//		return cars;
-		return Collections.emptyList();
+		List<Car> cars = new ArrayList<>();
+		
+		try {
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE m.manufacturer = '" + make + "';";
+			resultSet = statement.executeQuery(sql);
+			
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String carMake = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				var c = new Car(id, carMake, model, year, transmission, horsePower);
+				cars.add(c);
+			}
+		} catch (final SQLException e) {
+			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
+			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+			} catch (final Exception e) {
+				System.err.println("[ERROR] Failed to close resultSet.");
+				e.printStackTrace();
+			}
+		}
+		return cars;
 	}
 	
 //	/**
