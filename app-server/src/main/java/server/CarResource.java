@@ -10,26 +10,37 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/cars")
-public class CarResource {
+public class CarResource {	
 	@GET
 	@Produces( {MediaType.APPLICATION_XML} )
 	public List<Car> getCars() {
-		return CarDao.instance.getCars();
+		try (CarDao carDao = new CarDao()) {
+			return carDao.getCars();
+		} catch (final Exception e ) {
+			e.printStackTrace();
+		}
+		return Collections.emptyList();
 	}
 	
 	@GET
 	@Produces( {MediaType.APPLICATION_XML} )
 	@Path("/id/{carId}")
 	public Car getCarByID(@PathParam("carId") String id) {
-		return CarDao.instance.getCarByID(Integer.parseInt(id));
+		try (CarDao carDao = new CarDao()) {
+			return carDao.getCarByID(Integer.parseInt(id));
+		} catch (final Exception e ) {
+			e.printStackTrace();
+		}
+		return new Car();
 	}
+
 	
-	@GET
-	@Produces( {MediaType.APPLICATION_XML} )
-	@Path("/manufacturer/{carMake}")
-	public List<Car> getCarsByMake(@PathParam("carMake") String make) {
-		return CarDao.instance.getCarsByMake(make);
-	}
+//	@GET
+//	@Produces( {MediaType.APPLICATION_XML} )
+//	@Path("/manufacturer/{carMake}")
+//	public List<Car> getCarsByMake(@PathParam("carMake") String make) {
+//		return CarDao.instance.getCarsByMake(make);
+//	}
 	
 //	@GET
 //	@Produces( {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON} )

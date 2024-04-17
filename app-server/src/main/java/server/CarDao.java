@@ -5,29 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public enum CarDao {
-	instance;
-	
-	private static final String JDBC_DRIVER = "org.hsqldb.jdbcDriver";
-    private static final String DATABASE_URL = "jdbc:hsqldb:hsql://localhost/oneDB"; 
-    private static final String DATABASE_USER = "SA"; 
-    private static final String DATABASE_PASSWORD = "Passw0rd";
-    
-    private Connection connection = null;
-    private Statement statement = null;
-    private ResultSet resultSet = null;
-    
-    private CarDao() {
-		try {
-			Class.forName(JDBC_DRIVER);
-			connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
-			statement = connection.createStatement();
-		} catch (final Exception e) {
-			System.err.println("[ERROR] Failed to initialize connection to HSQL database.");
-			e.printStackTrace();
-		}
-    }
-	
+public class CarDao implements AutoCloseable {
     /**
 	 * Retrieves all cars from the database.
 	 * @return A list of all cars.
@@ -35,9 +13,10 @@ public enum CarDao {
 	public List<Car> getCars() {
 		List<Car> cars = new ArrayList<>();
 		
-		try {
+		try (Connection connection = DatabaseManager.getConnection()) {
 			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id;";
-			resultSet = statement.executeQuery(sql);
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
 			
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
@@ -53,14 +32,7 @@ public enum CarDao {
 		} catch (final Exception e) {
 			System.err.println("[ERROR] Failed to execute SQL query.");
 			e.printStackTrace();
-		} finally {
-			try {
-				resultSet.close();
-			} catch (final Exception e) {
-				System.err.println("[ERROR] Failed to close resultSet.");
-				e.printStackTrace();
-			}
-		}
+		} 
 		return cars;
 	}
 	
@@ -73,40 +45,38 @@ public enum CarDao {
 	public Car getCarByID(int id) {
 		Car car = new Car();
 		
-//		try {
-//			String idStr = Integer.toString(id);
-//			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE c.id = " + idStr + ";";
-//			resultSet = statement.executeQuery(sql);
-//			
-//			while (resultSet.next()) {
-//				int carID = resultSet.getInt("id");
-//				String make = resultSet.getString("manufacturer");
-//				String model = resultSet.getString("model");
-//				int year = resultSet.getInt("year");
-//				String transmission = resultSet.getString("transmission");
-//				int horsePower = resultSet.getInt("horsepower");
-//				
-//				car.setId(carID);
-//				car.setMake(make);
-//				car.setModel(model);
-//				car.setYear(year);
-//				car.setTransmission(transmission);
-//				car.setHorsePower(horsePower);
-//			}
-//		} catch (final Exception e) {
-//			System.err.println("[ERROR] Failed to execute SQL query.");
-//			e.printStackTrace();
-//		} 
-//		finally {
-//			try {
-//				resultSet.close();
-//			} catch (final Exception e) {
-//				System.err.println("[ERROR] Failed to close resultSet.");
-//				e.printStackTrace();
-//			}
-//		}
+		try (Connection connection = DatabaseManager.getConnection()) {
+			String idStr = Integer.toString(id);
+			String sql = "SELECT c.id, m.manufacturer, c.model, c.year, c.transmission, c.horsepower FROM cars c JOIN manufacturers m ON c.manufacturer_id = m.id WHERE c.id = " + idStr + ";";
+			
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			
+			if (resultSet.next()) {
+				int carID = resultSet.getInt("id");
+				String make = resultSet.getString("manufacturer");
+				String model = resultSet.getString("model");
+				int year = resultSet.getInt("year");
+				String transmission = resultSet.getString("transmission");
+				int horsePower = resultSet.getInt("horsepower");
+				
+				car.setId(carID);
+				car.setMake(make);
+				car.setModel(model);
+				car.setYear(year);
+				car.setTransmission(transmission);
+				car.setHorsePower(horsePower);
+			}
+		} catch (final Exception e) {
+			System.err.println("[ERROR] Failed to execute SQL query.");
+			e.printStackTrace();
+		} 
 		return car;
 	}
+
+	
+	@Override
+	public void close() throws Exception { }
 	
 	/**
 	 * Retrieves all cars with the given make from the database.
@@ -114,7 +84,7 @@ public enum CarDao {
 	 * 			The make of the cars to retrieve.
 	 * @return A list of all cars with the given make.
 	 */
-	public List<Car> getCarsByMake(String make) {
+//	public List<Car> getCarsByMake(String make) {
 //		List<Car> cars = new ArrayList<>();
 //		
 //		try {
@@ -144,8 +114,8 @@ public enum CarDao {
 //			}
 //		}
 //		return cars;
-		return Collections.emptyList();
-	}
+//		return Collections.emptyList();
+//	}
 	
 //	/**
 //	 * Retrieves all cars with a given model from the database.
